@@ -10,8 +10,8 @@ export class ConfigService {
     let urlPrefixLocalhost = 'http://localhost:8000/';
     let urlAPI = '';
     if (environment.production) {
-      urlPrefix = 'https://travel-mate-server-s2.herokuapp.com/';
-      urlPrefixLocalhost = 'https://travel-mate-server-s2.herokuapp.com/';
+      urlPrefix = 'https://demo-travel-mate-server.herokuapp.com/';
+      urlPrefixLocalhost = 'https://demo-travel-mate-server.herokuapp.com/';
       urlAPI = '';
     }
     // pathFiles for Storage provider
