@@ -3,22 +3,23 @@
     <ion-buttons slot="start">
       <ion-back-button color="primary"></ion-back-button>
     </ion-buttons>
-    <ion-title color="primary">Trip detail</ion-title>
+    <ion-title color="primary">{{ 'TRIP_DETAILS.TRIP_DETAILS' | translate}}</ion-title>
   </ion-toolbar>
 </ion-header>
 
-<ion-content>
+<ion-content *ngIf="trip">
 
   <div class="bg-light" text-center>
-    <img src="assets/img/trip_2.jpg" width="100%">
+    <img src="https://wayteam-static.s3.amazonaws.com/static/img/{{trip.userImage}}" width="100%">
   </div>
 
   <ion-card class="bg-light" no-margin>
     <ion-card-content>
       <h1 margin-bottom>
-        <ion-text color="dark"><strong>Brasil</strong></ion-text>
+        <ion-text color="dark"><strong>{{ trip.creator }}</strong></ion-text>
       </h1>
-      <h5>bla bla bla</h5>
+      <h4> {{ trip.title }}: {{ trip.description }} </h4>
+      <h5> {{ 'TRIP_DETAILS.START_DATE' | translate }}: {{ trip.startDate }} {{ 'TRIP_DETAILS.TO' | translate }} {{ trip.endDate }} </h5>
     </ion-card-content>
   </ion-card>
 
@@ -31,25 +32,84 @@
     <ion-icon name="star" slot="end" size="small" color="warning" no-margin></ion-icon>
     <ion-icon name="star" slot="end" size="small" color="warning" no-margin></ion-icon>
     <ion-avatar slot="start">
-      <img src="assets/img/avatar.jpeg" class="user-avatar">
+      <img src="assets/img/trip/{{trip.image}}" class="user-avatar">
     </ion-avatar>
     <ion-label>
       <ion-text color="light">
         <h2>
-          <strong>Created by</strong>
+          <strong> {{ 'TRIP_DETAILS.CREATED_BY' | translate }} </strong>
         </h2>
       </ion-text>
       <ion-text color="warning">
         <h3>
-          Rubén
+          {{ trip.creator }}
         </h3>
       </ion-text>
 
-
-      <ion-button icon-left size="small" shape="round" color="secondary" (click)="join()">
-
-        join
-      </ion-button>
+      <ng-container *ngIf="!myTrip">
+        <ion-button icon-left size="small" shape="round" color="secondary" (click)="join()">
+          {{ 'TRIP_DETAILS.JOIN' | translate }}
+        </ion-button>
+      </ng-container>
     </ion-label>
   </ion-item>
+
+  <ion-list>
+    <ion-radio-group>
+      <ion-list-header color="light">
+        <ion-label class="fw700">{{ 'PROFILE.USERS_ACCEPTED' | translate }}</ion-label>
+      </ion-list-header>
+
+      <ng-container *ngIf="usersAccepted.length != 0">
+        <ion-item *ngFor="let i of usersAccepted">
+          <ion-label color="primary" (click)="goTo('user-profile/', i.applicantName)">
+            {{ i.applicantName }} 
+          </ion-label>
+        </ion-item>
+      </ng-container>
+      <ng-container *ngIf="usersAccepted.length == 0">
+          <ion-item>
+            <ion-label>
+              {{ 'PROFILE.NO_USER_ACCEPTED' | translate }}
+            </ion-label>
+          </ion-item>
+      </ng-container>
+    </ion-radio-group>
+  </ion-list>
+
+  <ng-container *ngIf="myTrip">
+    <ion-list>
+      <ion-radio-group>
+        <ion-list-header color="light">
+          <ion-label class="fw700">{{ 'PROFILE.USERS_TO_ACCEPT' | translate }}</ion-label>
+        </ion-list-header>
+
+        <ng-container *ngIf="usersPending.length != 0">
+          <ion-item *ngFor="let i of usersPending">
+            <ion-label color="primary" (click)="goTo('user-profile/', i.applicantName)">
+              {{ i.applicantName }} 
+            </ion-label>
+            <ion-buttons slot="end">
+                <ion-button size="small" shape="round" color="dark" slot="end" (click)="acceptApplication(i.applicationId)">
+                    <ion-icon name="checkmark-circle" color="dark" item-right></ion-icon>
+                </ion-button>
+
+                <ion-button size="small" shape="round" color="dark" slot="end" (click)="rejectApplication(i.applicationId)">
+                    <ion-icon name="close-circle" color="tertiary" item-right></ion-icon>
+                </ion-button>
+                
+            </ion-buttons>
+          </ion-item>
+        </ng-container>
+        <ng-container *ngIf="usersPending.length == 0">
+            <ion-item>
+              <ion-label>
+                {{ 'PROFILE.NO_USER_PENDING' | translate }}
+              </ion-label>
+            </ion-item>
+        </ng-container>
+      </ion-radio-group>
+    </ion-list>
+  </ng-container>
+
 </ion-content>

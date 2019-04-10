@@ -1,15 +1,23 @@
 import { Component, OnInit } from '@angular/core';
-import { NavController } from '@ionic/angular';
+import { NavController, AlertController } from '@ionic/angular';
 import { DataManagement } from '../../services/dataManagement';
 import { Trip } from '../../app.data.model';
+import { ConfigService } from 'src/config/configService';
 @Component({
   selector: 'app-trips',
   templateUrl: './trips.page.html',
   styleUrls: ['./trips.page.scss']
 })
 export class TripsPage implements OnInit {
+  path = '';
   listTrips: Trip[] = [];
-  constructor(public navCtrl: NavController, private dm: DataManagement) {
+  constructor(
+    public navCtrl: NavController,
+    private dm: DataManagement,
+    private config: ConfigService,
+    private alertCtrl: AlertController
+  ) {
+    this.path = this.config.config().restUrlPrefixLocalhost;
     this.listYourTrips();
   }
 
@@ -35,4 +43,28 @@ export class TripsPage implements OnInit {
       })
       .catch(error => {});
   }
+
+  public goTo(destination: string, trip) {
+    const path = destination + trip.id;
+    this.navCtrl.navigateForward(path);
+  }
+
+  public applyForTrip(tripId: string) {
+    this.dm.applyForTrip(tripId).then((_) => {
+      this.presentAlert();
+    }).catch((_) => {
+
+    });
+  }
+
+  presentAlert() {
+    const alert = this.alertCtrl.create(
+      {
+        message: 'hola',
+      });
+      alert.then((res) => {
+        console.log(res);
+      });
+  }
+
 }

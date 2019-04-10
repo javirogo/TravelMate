@@ -43,6 +43,7 @@ class UserProfile(models.Model):
     avarageRate = models.IntegerField(blank=False, default=0)
     numRate = models.IntegerField(blank=False, default=0)
     isPremium = models.BooleanField(default=False)
+    datePremium = models.DateField(default="2019-04-09")
 
     STATUS_OPTIONS = (
         ('A', 'Active'),
@@ -76,9 +77,9 @@ class UserProfile(models.Model):
 
 class Message(models.Model):
     sender = models.ForeignKey(
-        UserProfile, on_delete=models.CASCADE, related_name='sender')
+        User, on_delete=models.CASCADE, related_name='sender')
     receiver = models.ForeignKey(
-        UserProfile, on_delete=models.CASCADE, related_name='receiver')
+        User, on_delete=models.CASCADE, related_name='receiver')
     message = models.CharField(max_length=1200)
     timestamp = models.DateTimeField(auto_now_add=True)
 
@@ -184,8 +185,8 @@ class Country(models.Model):
 class City(models.Model):
     country = models.ForeignKey("Country", on_delete=models.CASCADE)
 
-    trips = models.ManyToManyField(Trip, blank=True)
     name = models.CharField(max_length=50)
+    trips = models.ManyToManyField(Trip, blank=True, related_name="cities")
 
     def __str__(self):
         return self.name

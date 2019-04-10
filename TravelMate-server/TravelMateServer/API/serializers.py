@@ -1,4 +1,4 @@
-from .models import UserProfile, Language, Trip, Application, City, Country, Interest
+from .models import UserProfile, Language, Trip, Application, City, Country, Interest, Message, Invitation
 from rest_framework import serializers
 from django.contrib.auth.models import User
 import datetime
@@ -18,6 +18,12 @@ class CountrySerializer(serializers.ModelSerializer):
         fields = ['name']
 
 
+class ApplicationSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Application
+        fields = ['applicant', 'status', 'id']
+
+
 class TripSerializer(serializers.ModelSerializer):
     creator = serializers.SerializerMethodField()
     userImage = serializers.SerializerMethodField()
@@ -25,7 +31,7 @@ class TripSerializer(serializers.ModelSerializer):
     class Meta:
         model = Trip
         fields = [
-            'creator', 'title', 'description', 'startDate', 'endDate',
+            'id', 'creator', 'title', 'description', 'startDate', 'endDate',
             'tripType', 'image', 'userImage', 'status'
         ]
 
@@ -36,6 +42,12 @@ class TripSerializer(serializers.ModelSerializer):
     def get_userImage(self, obj):
         userImage_queryset = obj.userImage.name
         return userImage_queryset
+
+
+class FullTripSerializer(serializers.Serializer):
+    trip = TripSerializer(many=False)
+    applicationsList = ApplicationSerializer(many=True)
+    pendingsList = ApplicationSerializer(many=True)
 
 
 class CitySerializer(serializers.ModelSerializer):
@@ -108,3 +120,29 @@ class UserProfileSerializer(serializers.ModelSerializer):
             startDate__gte=now)
 
         return TripSerializer(trip_queryset, many=True).data
+
+
+class MessageSerializer(serializers.ModelSerializer):
+    sender = serializers.SlugRelatedField(
+        many=False, slug_field='username', queryset=User.objects.all())
+    receiver = serializers.SlugRelatedField(
+        many=False, slug_field='username', queryset=User.objects.all())
+
+    class Meta:
+        model = Message
+        fields = ['sender', 'receiver', 'message', 'timestamp']
+
+class InterestSerializer(serializers.ModelSerializer):
+    users = UserProfileSerializer(many=True)
+
+    class Meta:
+        model = Interest
+        fields = ['name', 'users']
+
+class InvitationSerializer(serializers.ModelSerializer):
+    sender = UserProfileSerializer(many=False)
+    receiver = UserProfileSerializer(many=False)
+
+    class Meta:
+        model = Invitation
+        fields = ['sender', 'receiver', 'status']

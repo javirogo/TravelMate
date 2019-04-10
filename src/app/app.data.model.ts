@@ -9,7 +9,7 @@ export class UserProfile {
   nationality: string;
   photo: string;
   discoverPhoto: string;
-  averageRate: Number;
+  avarageRate: Number;
   numRate: Number;
   isPremium: boolean;
   status: boolean;
@@ -66,3 +66,14 @@ export class test {
   previous: string;
   results: User[];
 }
+
+export class application_user {
+  applicantName: string;
+  applicationId: string;
+
+  constructor(applicantName: string, applicationId: string) {
+    this.applicantName = applicantName;
+    this.applicationId = applicationId;
+  }
+
+} 
